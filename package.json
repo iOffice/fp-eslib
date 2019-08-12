@@ -1,12 +1,12 @@
 {
-  "name": "@ioffice/template-name",
+  "name": "@ioffice/fp",
   "version": "0.0.0",
   "description": "",
   "author": "iOFFICE Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iOffice/[name]-eslib.git"
+    "url": "git+https://github.com/iOffice/fp-eslib.git"
   },
   "main": "node",
   "module": "fesm5",
