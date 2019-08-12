@@ -1,5 +1,5 @@
 ## Macros
-ESLIB := template
+ESLIB := fp
 
 CIBUILDER := node build_node/tools/ciBuilder.js
 
@@ -10,7 +10,7 @@ run: buildTestBundle
 	$(CIBUILDER)
 
 preRelease: buildTestBundle
-	PRERELEASE=true $(CIBUILDER)
+	PRE_RELEASE=true $(CIBUILDER)
 
 releaseSetup: buildTestBundle
 	RELEASE_SETUP=true $(CIBUILDER)
