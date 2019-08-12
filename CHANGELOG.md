@@ -12,3 +12,10 @@ As per semantic versioning
 
 
 ## [Unreleased]
+
+## [0.0.1] - August 12, 2019
+- Migrated the fp tools used in the [`ci-builder`](https://github.com/iOffice/ci-builder-eslib).
+
+
+[Unreleased]: https://github.com/iOffice/fp-eslib/compare/0.0.1...HEAD
+[0.0.1]: https://github.com/iOffice/fp-eslib/compare/7270ffed28016080f8bdecef9d29e059a6c3598a...0.0.1
