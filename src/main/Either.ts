@@ -330,4 +330,25 @@ function evalIteration<A, B>(cb: () => B | undefined): Either<A, B> {
   }
 }
 
-export { Either, EitherLeft, EitherRight, Left, Right, evalIteration };
+/**
+ * Similar to `evalIteration` but it returns a promise of the result.
+ */
+async function asyncEvalIteration<A, B>(
+  cb: () => Promise<B | undefined>,
+): Promise<Either<A, B>> {
+  try {
+    return Right(await cb());
+  } catch (ex) {
+    return ex;
+  }
+}
+
+export {
+  Either,
+  EitherLeft,
+  EitherRight,
+  Left,
+  Right,
+  evalIteration,
+  asyncEvalIteration,
+};
