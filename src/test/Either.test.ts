@@ -76,6 +76,16 @@ describe('Either', () => {
     ]);
   });
 
+  it('(mapIfLeft) should map left values', () => {
+    const left: Either<string, number> = Left('left');
+    const mapped: Either<string, number> = left.mapIfLeft(x => `${x}: mapped`);
+    compareValues([
+      [left.isLeft, true, 'left should be Left'],
+      [mapped.isLeft, true, 'right should be Right'],
+      [mapped.value, 'left: mapped', 'should have acted on the left value'],
+    ]);
+  });
+
   it('(map) should map the value', () => {
     const obj: ITestObj = {
       s: 'value',

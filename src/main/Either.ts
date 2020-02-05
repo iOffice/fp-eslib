@@ -191,6 +191,27 @@ abstract class Either<A, B> implements Iterable<B> {
   }
 
   /**
+   * The given function is applied if this is a `Left`.
+   *
+   * ```
+   * Right(12).mapIfLeft(x => "flower") // Result: Right(12)
+   * Left(12).mapIfLeft(x => "flower")  // Result: Left("flower")
+   * ```
+   *
+   * The following are equivalent:
+   *
+   * ```
+   * rightInstance.swap().map(f).swap()
+   * rightInstance.mapIfLeft(f)
+   * ```
+   */
+  mapIfLeft<Y>(f: (b: A) => Y): Either<Y, B> {
+    return this.isLeft
+      ? Left(f(this.value as A))
+      : ((this as unknown) as Either<Y, B>);
+  }
+
+  /**
    * Returns `Right` with the existing value of `Right` if this is a `Right` and
    * the given predicate `p` holds for the right value,
    *
