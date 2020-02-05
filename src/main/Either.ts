@@ -15,7 +15,7 @@ import { LazyArg, extractLazyArg } from './Types';
  *
  * Ported from https://github.com/scala/scala/blob/v2.12.0/src/library/scala/util/Either.scala
  */
-abstract class Either<A, B> {
+abstract class Either<A, B> implements Iterable<B> {
   /**
    * The value of the `Either` object.
    */
@@ -252,6 +252,34 @@ abstract class Either<A, B> {
   ): Either<X, Y> {
     return test ? Right(extractLazyArg(right)) : Left(extractLazyArg(left));
   }
+
+  /**
+   * Allows us to do
+   *
+   * ```
+   * try {
+   * for (const val of instanceOfEither) {
+   *    // handle val if instanceOfEither is a Right.
+   * }
+   * } catch (left) {
+   *   // handle instanceOfEither as a left.
+   * }
+   * ```
+   */
+  [Symbol.iterator](): Iterator<B> {
+    let isDone = false;
+    const instance = this;
+    return {
+      next(): IteratorResult<B> {
+        if (!instance.isRight) throw instance;
+        if (!isDone) {
+          isDone = true;
+          return { value: instance.value as B, done: false };
+        }
+        return { value: instance.value as B, done: true };
+      },
+    };
+  }
 }
 
 class EitherLeft<A, B> extends Either<A, B> {
@@ -286,4 +314,20 @@ const Right = <A, B>(val: B | null | undefined): EitherRight<A, B> => {
   return new EitherRight<A, B>((val as unknown) as B);
 };
 
-export { Either, EitherLeft, EitherRight, Left, Right };
+/**
+ * Expects `cb` to be a function composed of only `for of` loops that contain
+ * `Either` objects. When evaluating an `Either` in an iteration this will
+ * trigger it to throw an exception with the `Left` value which should be
+ * caught by this function.
+ *
+ * This is nothing but a short circuit to break out of a deep nested iteration.
+ */
+function evalIteration<A, B>(cb: () => B | undefined): Either<A, B> {
+  try {
+    return Right(cb());
+  } catch (ex) {
+    return ex;
+  }
+}
+
+export { Either, EitherLeft, EitherRight, Left, Right, evalIteration };

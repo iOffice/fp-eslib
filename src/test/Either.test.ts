@@ -1,5 +1,6 @@
-import { Either, Left, Maybe, None, Right } from '../main';
+import { Either, Left, Maybe, None, Right, evalIteration } from '../main';
 import { compareValues } from './helper';
+import { expect } from 'chai';
 
 // The `o` in the name at the end of the property name stands for optional.
 interface ITestObj {
@@ -20,6 +21,10 @@ interface IType {
 interface IRoom {
   type?: IType;
 }
+
+const getProvider = (host: string): Either<Error, string> => {
+  return Maybe(`Provider: ${host}`).toRight(new Error('no_provider'));
+};
 
 describe('Either', () => {
   it('(isLeft/isRight) should check for types', () => {
@@ -126,5 +131,56 @@ describe('Either', () => {
         'roomC',
       ],
     ]);
+  });
+
+  it('(iteration-1) should stop at Left values', async () => {
+    const hostOpt = None;
+    const tokenOpt = Maybe('token');
+
+    const r1 = evalIteration(() => {
+      for (const host of hostOpt.toRight(new Error('host_not_set')))
+        for (const token of tokenOpt.toRight(new Error('token_not_set')))
+          for (const provider of getProvider(host))
+            return { host, token, provider };
+    });
+
+    expect(r1.isLeft).to.eq(true, 'should be left');
+    expect(r1.value instanceof Error).to.eq(true, 'should be Error');
+    expect((r1.value as Error).message).to.eq('host_not_set');
+  });
+
+  it('(iteration-2) should stop at Left values', async () => {
+    const hostOpt = Maybe('host');
+    const tokenOpt = None;
+
+    const r2 = evalIteration(() => {
+      for (const host of hostOpt.toRight(new Error('host_not_set')))
+        for (const token of tokenOpt.toRight(new Error('token_not_set')))
+          for (const provider of getProvider(host))
+            return { host, token, provider };
+    });
+
+    expect(r2.isLeft).to.eq(true, 'should be left');
+    expect(r2.value instanceof Error).to.eq(true, 'should be Error');
+    expect((r2.value as Error).message).to.eq('token_not_set');
+  });
+
+  it('(iteration-3) should flow', async () => {
+    const hostOpt = Maybe('host');
+    const tokenOpt = Maybe('token');
+
+    const r3 = evalIteration(() => {
+      for (const host of hostOpt.toRight(new Error('host_not_set')))
+        for (const token of tokenOpt.toRight(new Error('token_not_set')))
+          for (const provider of getProvider(host))
+            return { host, token, provider };
+    });
+
+    expect(r3.isRight).to.eq(true, 'should be right');
+    expect(r3.value).to.deep.eq({
+      host: 'host',
+      token: 'token',
+      provider: 'Provider: host',
+    });
   });
 });
