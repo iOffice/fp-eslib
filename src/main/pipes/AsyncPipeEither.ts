@@ -62,6 +62,20 @@ function asyncPipeEither<L extends Error, R1, R2, R3, R4, R5, R6, R7, R8>(
   f8: Step<[R1, R2, R3, R4, R5, R6, R7], L, R8>,
 ): Promise<Either<L, R8>>;
 
+/**
+ * @deprecated Use the an either instance as an iterator with
+ * `asyncEvalIteration`
+ *
+ * ```
+ * const result = await asyncEvalIteration(async () => {
+ *   for (const val1 of await eitherInstance1)
+ *    for (const val2 of eitherInstance2)
+ *      return [ val1, val2 ];
+ * })
+ *
+ * // result is either [val1, val2] or a Left value.
+ * ```
+ */
 async function asyncPipeEither<V, E, T>(
   ...items: Step<V, E, T>[]
 ): Promise<Either<E, T>> {
