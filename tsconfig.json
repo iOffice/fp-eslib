@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.core.json",
   "compilerOptions": {
+    "downlevelIteration": true,
     "target": "es5",
     "lib": ["dom", "es2017"],
     "types": ["node", "mocha"],

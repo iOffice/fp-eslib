@@ -39,6 +39,20 @@ function pipeEither<L extends Error, R1, R2, R3, R4, R5, R6>(
   f6: Step<[R1, R2, R3, R4, R5], L, R6>,
 ): Either<L, R6>;
 
+/**
+ * @deprecated Use the an either instance as an iterator with
+ * `evalIteration`
+ *
+ * ```
+ * const result = evalIteration(() => {
+ *   for (const val1 of eitherInstance1)
+ *    for (const val2 of eitherInstance2)
+ *      return [ val1, val2 ];
+ * })
+ *
+ * // result is either [val1, val2] or a Left value.
+ * ```
+ */
 function pipeEither<V, E, T>(...items: Step<V, E, T>[]): Either<E, T> {
   let index = 0;
   let current: Either<E, T>;
