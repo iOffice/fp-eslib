@@ -13,6 +13,11 @@ As per semantic versioning
 
 ## [Unreleased]
 
+## [0.2.0] - April 18, 2020
+- Removed `pipeEither` and `asyncPipeEither`.
+- Fixed `evalIteration` and `asyncEvalIteration` not always returning a an Either object.
+
+
 ## [0.1.0] - February 07, 2020
 - Deprecated `pipeEither` and `asyncPipeEither`.
 - Added `mapIfLeft` method to `Either`.
@@ -24,6 +29,7 @@ As per semantic versioning
 - Migrated the fp tools used in the [`ci-builder`](https://github.com/iOffice/ci-builder-eslib).
 
 
-[Unreleased]: https://github.com/iOffice/fp-eslib/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/iOffice/fp-eslib/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/iOffice/fp-eslib/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/iOffice/fp-eslib/compare/0.0.1...0.1.0
 [0.0.1]: https://github.com/iOffice/fp-eslib/compare/7270ffed28016080f8bdecef9d29e059a6c3598a...0.0.1
