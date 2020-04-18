@@ -347,7 +347,8 @@ function evalIteration<A, B>(cb: () => B | undefined): Either<A, B> {
   try {
     return Right(cb());
   } catch (ex) {
-    return ex;
+    if (ex instanceof Either) return ex;
+    return Left(ex);
   }
 }
 
@@ -360,7 +361,8 @@ async function asyncEvalIteration<A, B>(
   try {
     return Right(await cb());
   } catch (ex) {
-    return ex;
+    if (ex instanceof Either) return ex;
+    return Left(ex);
   }
 }
 

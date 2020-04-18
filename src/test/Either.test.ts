@@ -211,15 +211,34 @@ describe('Either', () => {
       return Maybe('token').toRight(new Error('token_not_set'));
     };
 
-    const r1 = await asyncEvalIteration(async () => {
+    const r4 = await asyncEvalIteration(async () => {
       for (const host of (await getHost()).toRight(new Error('host_not_set')))
         for (const token of await getToken())
           for (const provider of getProvider(host))
             return { host, token, provider };
     });
 
-    expect(r1.isLeft).to.eq(true, 'should be left');
-    expect(r1.value instanceof Error).to.eq(true, 'should be Error');
-    expect((r1.value as Error).message).to.eq('host_not_set');
+    expect(r4.isLeft).to.eq(true, 'should be left');
+    expect(r4.value instanceof Error).to.eq(true, 'should be Error');
+    expect((r4.value as Error).message).to.eq('host_not_set');
+  });
+
+  it('(async-iteration) should throw unknown error', async () => {
+    const getHost = async (): Promise<Option<string>> => {
+      return Maybe('host');
+    };
+    const getToken = async (): Promise<Either<Error, string>> => {
+      throw Error('this can happen');
+    };
+
+    const result = await asyncEvalIteration(async () => {
+      for (const host of (await getHost()).toRight(new Error('host_not_set')))
+        for (const token of await getToken())
+          for (const provider of getProvider(host))
+            return { host, token, provider };
+    });
+    expect(result.isLeft).to.eq(true, 'should be left');
+    expect(result.value instanceof Error).to.eq(true, 'should be Error');
+    expect((result.value as Error).message).to.eq('this can happen');
   });
 });
