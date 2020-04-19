@@ -15,7 +15,13 @@ import {
 } from '@ioffice/ci-builder';
 
 import { PATHS } from './Paths';
-import { asyncPipeEither, Either, Maybe, Right, TryAsync } from '@ioffice/fp';
+import {
+  asyncEvalIteration,
+  Either,
+  Maybe,
+  Right,
+  TryAsync,
+} from '@ioffice/fp';
 
 class Builder extends CIBuilder {
   readonly releaseBranchMerged = /^Merge pull request #(\d+) from (.*)\/release(.*)/;
@@ -99,16 +105,13 @@ class Builder extends CIBuilder {
       ['node', 'fesm5', 'types'].map(_ => ensureDir(_)),
     );
 
-    return (await asyncPipeEither(
-      async _ => (await TryAsync(() => ensurePromise)).toEither(),
-      _ => util.move('build_node/main/', './node'),
-      _ => util.move('build_browser/main/', './fesm5'),
-      _ => util.move('declarations/main/', './types'),
-    ))
-      .swap()
-      .map(err => new Exception('failed to move files', err))
-      .swap()
-      .map(_ => 0 as 0);
+    return (await asyncEvalIteration<Exception, 0>(async () => {
+      let _;
+      for (_ of (await TryAsync(() => ensurePromise)).toEither())
+        for (_ of util.move('build_node/main/', './node'))
+          for (_ of util.move('build_browser/main/', './fesm5'))
+            for (_ of util.move('declarations/main/', './types')) return 0;
+    })).mapIfLeft(err => new Exception('failed to move files', err));
   }
 
   async getPublishInfo(): Promise<Either<Exception, [string, string]>> {
@@ -117,12 +120,11 @@ class Builder extends CIBuilder {
       const majorEither = Maybe(semver.parse(version))
         .map(x => x.major)
         .toRight(new Exception(`Unable to parse version: ${version}`));
-      return asyncPipeEither(
-        () => majorEither,
-        () => this.git.getCurrentCommit(),
-        ([major, commit]) => Right(`${major}.0.0-SNAPSHOT.${commit}`),
-        ([, , ver]) => Right([ver, 'snapshot']),
-      );
+      return asyncEvalIteration(async () => {
+        for (const major of majorEither)
+          for (const commit of await this.git.getCurrentCommit())
+            return [`${major}.0.0-SNAPSHOT.${commit}`, 'snapshot'];
+      });
     }
     return Right([version, 'latest']);
   }
@@ -132,19 +134,20 @@ class Builder extends CIBuilder {
    */
   async publish(): Promise<StepResult> {
     const name = this.env.packageName;
-    return asyncPipeEither(
-      () => this.getPublishInfo(),
-      ([[version, tag]]) => this.yarn.publish(version, tag),
-      ([[version, tag]]) =>
-        this.io.success(
-          0,
-          [
-            '\nRun:',
-            colors.green(`  yarn add ${name}@${tag} -E -D`),
-            `  to install ${name}@${colors.blue(version)}\n`,
-          ].join('\n'),
-        ),
-    );
+    return asyncEvalIteration(async () => {
+      let _;
+      for (const [version, tag] of await this.getPublishInfo())
+        for (_ of await this.yarn.publish(version, tag))
+          for (_ of await this.io.success(
+            0,
+            [
+              '\nRun:',
+              colors.green(`  yarn add ${name}@${tag} -E -D`),
+              `  to install ${name}@${colors.blue(version)}\n`,
+            ].join('\n'),
+          ))
+            return 0;
+    });
   }
 
   /**
@@ -161,11 +164,13 @@ class Builder extends CIBuilder {
    */
   async releaseSetup(param: IReleaseInfo): Promise<StepResult> {
     const { currentVersion: ver, newVersion: newVer } = param;
-    return asyncPipeEither(
-      _ => util.changePackageVersion(newVer),
-      _ => this.buildUtil.updateChangeLog(newVer),
-      _ => this.buildUtil.replaceVersionsInREADME(ver, newVer),
-    );
+    return asyncEvalIteration(async () => {
+      let _;
+      for (_ of await util.changePackageVersion(newVer))
+        for (_ of await this.buildUtil.updateChangeLog(newVer))
+          for (_ of await this.buildUtil.replaceVersionsInREADME(ver, newVer))
+            return 0;
+    });
   }
 }
 
