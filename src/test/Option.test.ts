@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird';
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
 

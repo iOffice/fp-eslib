@@ -289,6 +289,7 @@ abstract class Either<A, B> implements Iterable<B> {
    */
   [Symbol.iterator](): Iterator<B> {
     let isDone = false;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const instance = this;
     return {
       next(): IteratorResult<B> {

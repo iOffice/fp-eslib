@@ -28,13 +28,13 @@ class Builder extends CIBuilder {
 
   async isRelease(branch: string, commitMsg: string): Promise<boolean> {
     const isMasterBranch = ['master', 'refs/heads/master'].includes(branch);
-    // Only running the release build in node 8
-    const isNode8 = (await this.buildUtil.getNodeVersion())
-      .map(ver => ver.major === 8)
+    // Only running the release build in node 10
+    const isNode10 = (await this.buildUtil.getNodeVersion())
+      .map(ver => ver.major === 10)
       .getOrElse(false);
 
     return (
-      isNode8 && isMasterBranch && !!commitMsg.match(this.releaseBranchMerged)
+      isNode10 && isMasterBranch && !!commitMsg.match(this.releaseBranchMerged)
     );
   }
 

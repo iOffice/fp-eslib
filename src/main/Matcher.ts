@@ -5,7 +5,7 @@ type Constructor<T> = { new (): T };
 type TypedTuple<B, U> = [Constructor<B>, (val: B) => U];
 
 const match = <T, U>(value: T, ...options: Tuple<T, U>[]): Option<U> => {
-  for (let entry of options) {
+  for (const entry of options) {
     if (entry[0] === value) return Some(entry[1]());
   }
   return None;
@@ -14,7 +14,7 @@ const match = <T, U>(value: T, ...options: Tuple<T, U>[]): Option<U> => {
 const ifElseChain = <A>(
   ...options: [boolean, (_?: unknown) => A][]
 ): Option<A> => {
-  for (let entry of options) {
+  for (const entry of options) {
     if (entry[0]) return Some(entry[1]());
   }
   return None;
@@ -66,7 +66,7 @@ function matchType<B, U, T>(
   value: T,
   ...options: TypedTuple<B, U>[]
 ): Option<U> {
-  for (let entry of options) {
+  for (const entry of options) {
     if (value instanceof ((entry[0] as unknown) as Function)) {
       return Some(entry[1]((value as unknown) as B));
     }
