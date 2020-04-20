@@ -30,7 +30,7 @@ class Builder extends CIBuilder {
     const isMasterBranch = ['master', 'refs/heads/master'].includes(branch);
     // Only running the release build in node 10
     const isNode10 = (await this.buildUtil.getNodeVersion())
-      .map(ver => ver.major === 10)
+      .map((ver) => ver.major === 10)
       .getOrElse(false);
 
     return (
@@ -50,7 +50,7 @@ class Builder extends CIBuilder {
         mocha.useColors(true);
       }
       mocha.addFile('build_node/test/index.node.js');
-      mocha.run(failures => {
+      mocha.run((failures) => {
         if (failures > 0) {
           const verb = failures === 1 ? 'is' : 'are';
           const amount = failures === 1 ? '' : 's';
@@ -68,7 +68,7 @@ class Builder extends CIBuilder {
       this.io.openBlock('browser_testing', 'running browser tests');
       const browserTesting = new Promise<void>((fulfill, reject) => {
         const configFile = `${PATHS.buildNode}/tools/karma.conf.js`;
-        const server = new Server({ configFile }, exitCode => {
+        const server = new Server({ configFile }, (exitCode) => {
           if (exitCode === 0) {
             this.io.log('Browser testing passed');
             fulfill();
@@ -102,23 +102,25 @@ class Builder extends CIBuilder {
 
   async beforePublish(): Promise<StepResult> {
     const ensurePromise = Promise.all(
-      ['node', 'fesm5', 'types'].map(_ => ensureDir(_)),
+      ['node', 'fesm5', 'types'].map((_) => ensureDir(_)),
     );
 
-    return (await asyncEvalIteration<Exception, 0>(async () => {
-      let _;
-      for (_ of (await TryAsync(() => ensurePromise)).toEither())
-        for (_ of util.move('build_node/main/', './node'))
-          for (_ of util.move('build_browser/main/', './fesm5'))
-            for (_ of util.move('declarations/main/', './types')) return 0;
-    })).mapIfLeft(err => new Exception('failed to move files', err));
+    return (
+      await asyncEvalIteration<Exception, 0>(async () => {
+        let _;
+        for (_ of (await TryAsync(() => ensurePromise)).toEither())
+          for (_ of util.move('build_node/main/', './node'))
+            for (_ of util.move('build_browser/main/', './fesm5'))
+              for (_ of util.move('declarations/main/', './types')) return 0;
+      })
+    ).mapIfLeft((err) => new Exception('failed to move files', err));
   }
 
   async getPublishInfo(): Promise<Either<Exception, [string, string]>> {
     const version = this.env.packageVersion;
     if (this.env.isPreRelease) {
       const majorEither = Maybe(semver.parse(version))
-        .map(x => x.major)
+        .map((x) => x.major)
         .toRight(new Exception(`Unable to parse version: ${version}`));
       return asyncEvalIteration(async () => {
         for (const major of majorEither)

@@ -3,7 +3,7 @@ import { assert } from 'chai';
 function compareValues(
   tests: ([unknown, unknown] | [unknown, unknown, string])[],
 ): void {
-  tests.forEach(item => {
+  tests.forEach((item) => {
     assert.deepEqual(item[0], item[1], item[2]);
   });
 }

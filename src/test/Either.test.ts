@@ -78,7 +78,9 @@ describe('Either', () => {
 
   it('(mapIfLeft) should map left values', () => {
     const left: Either<string, number> = Left('left');
-    const mapped: Either<string, number> = left.mapIfLeft(x => `${x}: mapped`);
+    const mapped: Either<string, number> = left.mapIfLeft(
+      (x) => `${x}: mapped`,
+    );
     compareValues([
       [left.isLeft, true, 'left should be Left'],
       [mapped.isLeft, true, 'right should be Right'],
@@ -98,54 +100,54 @@ describe('Either', () => {
     compareValues([
       [
         Left(obj.so)
-          .map(x => `string: ${x}`)
+          .map((x) => `string: ${x}`)
           .toOption(),
         None,
       ],
-      [Right(obj.s).map(x => `string: ${x}`).value, 'string: value'],
+      [Right(obj.s).map((x) => `string: ${x}`).value, 'string: value'],
       [
         Left<number, number>(obj.no)
-          .map(x => x + 2)
+          .map((x) => x + 2)
           .toOption(),
         None,
       ],
-      [Right(obj.n).map(x => x + 2).value, 7],
+      [Right(obj.n).map((x) => x + 2).value, 7],
       [
         Left(obj.bo)
-          .map(x => (x ? 100 : 10))
+          .map((x) => (x ? 100 : 10))
           .toOption(),
         None,
       ],
-      [Right(obj.b).map(x => (x ? 100 : 10)).value, 100],
+      [Right(obj.b).map((x) => (x ? 100 : 10)).value, 100],
       [
         Maybe(obj.a)
           .toRight(new Error('empty'))
-          .map(x => x.length + 1)
+          .map((x) => x.length + 1)
           .toOption(),
         None,
       ],
-      [Right(obj.b).map(x => x).value, true],
+      [Right(obj.b).map((x) => x).value, true],
       [
         Maybe(roomA.type)
           .toRight(() => new Error('no type'))
-          .map(x => Maybe(x.name))
-          .map(x => x.map(_ => _.trim()).getOrElse(''))
+          .map((x) => Maybe(x.name))
+          .map((x) => x.map((_) => _.trim()).getOrElse(''))
           .getOrElse('none'),
         'none',
       ],
       [
         Maybe(roomB.type)
           .toRight(() => new Error('no type'))
-          .map(x => Maybe(x.name))
-          .map(x => x.map(_ => _.trim()).getOrElse('almost got it'))
+          .map((x) => Maybe(x.name))
+          .map((x) => x.map((_) => _.trim()).getOrElse('almost got it'))
           .getOrElse('none'),
         'almost got it',
       ],
       [
         Maybe(roomC.type)
           .toRight(() => new Error('no type'))
-          .map(x => Maybe(x.name))
-          .map(x => x.map(_ => _.trim()).getOrElse('almost got it'))
+          .map((x) => Maybe(x.name))
+          .map((x) => x.map((_) => _.trim()).getOrElse('almost got it'))
           .getOrElse('none'),
         'roomC',
       ],

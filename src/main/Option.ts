@@ -94,7 +94,7 @@ abstract class OptionW<A> {
    * no way at the moment to let Typescript know this.
    */
   flatten<B>(): Option<B> {
-    return this.flatMap<B>(id => {
+    return this.flatMap<B>((id) => {
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       return id instanceof OptionW ? id : Some<B>(id as any);
     });
@@ -187,7 +187,11 @@ abstract class OptionW<A> {
       const item = this.get();
       const callback = item['subscribe'] || item['then'];
       if (callback) {
-        callback.call(item, (res: D) => fn(Maybe(res)), () => fn(None));
+        callback.call(
+          item,
+          (res: D) => fn(Maybe(res)),
+          () => fn(None),
+        );
       }
     }
   }

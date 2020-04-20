@@ -258,12 +258,12 @@ describe('Option', () => {
     ]);
   });
 
-  it('(later:promise) should handle rejected promises', done => {
+  it('(later:promise) should handle rejected promises', (done) => {
     const x = new Promise<number[]>((_resolve, reject) => {
       reject(new Error('rejection_test'));
     });
 
-    Maybe(x).later<number[]>(res => {
+    Maybe(x).later<number[]>((res) => {
       try {
         assert.deepEqual(res.getOrElse([5]), [5]);
         done();
@@ -273,15 +273,15 @@ describe('Option', () => {
     });
   });
 
-  it('(later:promise) should handle resolved promises', done => {
+  it('(later:promise) should handle resolved promises', (done) => {
     type objType = { id: number; name: string };
-    const x = new Promise<objType[]>(resolve => {
+    const x = new Promise<objType[]>((resolve) => {
       resolve([]);
     });
 
-    Maybe(x).later<objType[]>(res => {
+    Maybe(x).later<objType[]>((res) => {
       const validArray = res
-        .filter(v => v.length > 0)
+        .filter((v) => v.length > 0)
         .getOrElse([{ id: 0, name: 'No Data' }]);
       const name = validArray[0].name;
       try {
