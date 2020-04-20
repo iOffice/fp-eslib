@@ -12,6 +12,6 @@ const PATHS = {
 };
 
 // Normalizing since having `//` in the path can be bad in some machines.
-Object.keys(PATHS).forEach(key => (PATHS[key] = path.normalize(PATHS[key])));
+Object.keys(PATHS).forEach((key) => (PATHS[key] = path.normalize(PATHS[key])));
 
 export { PATHS };

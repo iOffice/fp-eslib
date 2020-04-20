@@ -173,7 +173,7 @@ abstract class Either<A, B> implements Iterable<B> {
    * Equivalent to `flatMap(id => id)`
    */
   flatten<A1, B1>(): Either<A1, B1> {
-    return this.flatMap(id => (id as unknown) as Either<A1, B1>);
+    return this.flatMap((id) => (id as unknown) as Either<A1, B1>);
   }
 
   /**
@@ -289,6 +289,7 @@ abstract class Either<A, B> implements Iterable<B> {
    */
   [Symbol.iterator](): Iterator<B> {
     let isDone = false;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const instance = this;
     return {
       next(): IteratorResult<B> {
