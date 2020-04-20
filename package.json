@@ -16,7 +16,6 @@
     "@ioffice/ci-builder": "0.3.3",
     "@ioffice/fp": "0.2.0",
     "@types/chai": "4.1.7",
-    "@types/colors": "1.2.1",
     "@types/eslint": "4.16.6",
     "@types/fs-extra": "8.0.0",
     "@types/inquirer": "6.0.3",
