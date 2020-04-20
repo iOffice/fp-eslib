@@ -13,7 +13,7 @@
   "typings": "types",
   "sideEffects": false,
   "devDependencies": {
-    "@ioffice/ci-builder": "0.3.3",
+    "@ioffice/ci-builder": "0.4.0",
     "@ioffice/fp": "0.2.0",
     "@types/chai": "4.1.7",
     "@types/eslint": "4.16.6",
