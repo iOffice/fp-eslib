@@ -12,6 +12,9 @@
   "module": "fesm5",
   "typings": "types",
   "sideEffects": false,
+  "scripts": {
+    "preinstall": "node yarn-check.js"
+  },
   "devDependencies": {
     "@ioffice/ci-builder": "0.4.0",
     "@ioffice/fp": "0.2.0",
